@@ -1,18 +1,20 @@
-#include <GL/glut.h>  // a glut inclui a gl.h
+#include <GL/glut.h> // a glut inclui a gl.h
 #include <unistd.h>
 
 #include <cmath>
-#include <cstdlib>  // para usar a funcao exit
+#include <cstdlib> // para usar a funcao exit
 #include <iostream>
 using namespace std;
 
-struct PontoXY {
+struct PontoXY
+{
     GLfloat x;
     GLfloat y;
     GLfloat angulo;
     GLfloat escala;
     // construtor padrao, vai construir o objeto na origem
-    PontoXY() {
+    PontoXY()
+    {
         x = 0;
         y = 0;
         angulo = 0;
@@ -29,8 +31,10 @@ PontoXY pontoPrincipal = PontoXY();
 
 float anguloSegundo = 360.0f, anguloMinuto = 360.0f, anguloHora = 360.0f;
 
-void movimentarPonteiros() {
-    if (!animacaoAtiva) return;
+void movimentarPonteiros()
+{
+    if (!animacaoAtiva)
+        return;
     usleep(1000000);
     anguloSegundo -= 6.0f;
     anguloMinuto -= 6.0f / 60.0f;
@@ -44,11 +48,14 @@ void movimentarPonteiros() {
     glutPostRedisplay();
 }
 
-void criaImagemTextura(void) {
+void criaImagemTextura(void)
+{
     int tamanhoTextura;
 
-    for (int i = 0; i < alturaTextura; i++) {
-        for (int j = 0; j < larguraTextura; j++) {
+    for (int i = 0; i < alturaTextura; i++)
+    {
+        for (int j = 0; j < larguraTextura; j++)
+        {
             tamanhoTextura = ((((i & 0x8) == 0) ^ ((j & 0x8)) == 0)) * 255;
             imagemTextura[i][j][0] = (GLubyte)tamanhoTextura;
             imagemTextura[i][j][1] = (GLubyte)tamanhoTextura;
@@ -60,7 +67,8 @@ void criaImagemTextura(void) {
 
 GLfloat BACKGROUND_COLOR_DEFAULT[3] = {0, 0, 0};
 
-void quadrilatero(float x, float y, float tamanho, float larguraX, float larguraY, GLfloat backgroundColor[] = BACKGROUND_COLOR_DEFAULT) {
+void quadrilatero(float x, float y, float tamanho, float larguraX, float larguraY, GLfloat backgroundColor[] = BACKGROUND_COLOR_DEFAULT)
+{
     glPushMatrix();
     glBegin(GL_QUADS);
     glColor3f(backgroundColor[0], backgroundColor[1], backgroundColor[2]);
@@ -72,7 +80,8 @@ void quadrilatero(float x, float y, float tamanho, float larguraX, float largura
     glPopMatrix();
 }
 
-void quadrilateroComTextura(float x, float y, float tamanho, float larguraX, float larguraY, GLfloat backgroundColor[] = BACKGROUND_COLOR_DEFAULT) {
+void quadrilateroComTextura(float x, float y, float tamanho, float larguraX, float larguraY, GLfloat backgroundColor[] = BACKGROUND_COLOR_DEFAULT)
+{
     glPushMatrix();
     glBegin(GL_QUADS);
     glColor3f(backgroundColor[0], backgroundColor[1], backgroundColor[2]);
@@ -89,7 +98,8 @@ void quadrilateroComTextura(float x, float y, float tamanho, float larguraX, flo
     glPopMatrix();
 }
 
-void circunferencia(GLfloat x, GLfloat y, GLfloat raio) {
+void circunferencia(GLfloat x, GLfloat y, GLfloat raio)
+{
     int i;
     int triangleAmount = 20;
 
@@ -97,7 +107,8 @@ void circunferencia(GLfloat x, GLfloat y, GLfloat raio) {
 
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(x, y);
-    for (i = 0; i <= triangleAmount; i++) {
+    for (i = 0; i <= triangleAmount; i++)
+    {
         glVertex2f(
             x + (raio * cos(i * twicePi / triangleAmount)),
             y + (raio * sin(i * twicePi / triangleAmount)));
@@ -105,12 +116,14 @@ void circunferencia(GLfloat x, GLfloat y, GLfloat raio) {
     glEnd();
 }
 
-void desenhaArmacao() {
+void desenhaArmacao()
+{
     GLfloat lineRgbColor[] = {0.94, 0.64, 0.04};
     quadrilatero(0, 0, 0.25, 1, 1, lineRgbColor);
 }
 
-void desenhaMarcadoresHora() {
+void desenhaMarcadoresHora()
+{
     glPushMatrix();
     GLfloat lineRgbColor[] = {0.0, 0.31, 0.93};
     quadrilatero(0, 0.205, 0.015, 0.1, 1, lineRgbColor);
@@ -120,14 +133,25 @@ void desenhaMarcadoresHora() {
     glPopMatrix();
 }
 
-void desenhaPonteiros() {
+void desenhaPonteiros()
+{
     glPushMatrix();
     glRotatef(anguloHora, 0, 0, 1);
     glColor3f(0, 0, 0);
     glBegin(GL_LINE_STRIP);
     glVertex2f(0, 0);
-    glVertex2f(0.090667, -0.002500);
+    glVertex2f(0.09, 0);
     glEnd();
+
+    glPushMatrix();
+    glBegin(GL_TRIANGLES);
+    glColor3f(0, 0, 0);
+    glVertex2f(0.09, 0.01);
+    glVertex2f(0.11, 0);
+    glVertex2f(0.09, -0.01);
+    glEnd();
+    glPopMatrix();
+
     glPopMatrix();
 
     glPushMatrix();
@@ -137,6 +161,16 @@ void desenhaPonteiros() {
     glVertex2f(0, 0);
     glVertex2f(0, 0.13);
     glEnd();
+
+    glPushMatrix();
+    glBegin(GL_TRIANGLES);
+    glColor3f(0, 0, 0);
+    glVertex2f(-0.01, 0.13);
+    glVertex2f(0, 0.15);
+    glVertex2f(0.01, 0.13);
+    glEnd();
+    glPopMatrix();
+
     glPopMatrix();
 
     glPushMatrix();
@@ -150,10 +184,12 @@ void desenhaPonteiros() {
     glPopMatrix();
 }
 
-void desenhaVidro() {
+void desenhaVidro()
+{
     GLfloat lineRgbColor[] = {0.70, 0.86, 0.94};
     glPushMatrix();
-    if (temIluminacao) {
+    if (temIluminacao)
+    {
         GLfloat light_position[] = {0.0, 0.0, 0.0, 0.0};
         GLfloat mat_ambient[] = {1.0, 1.0, 1.0, 1.0};
 
@@ -168,7 +204,9 @@ void desenhaVidro() {
         glDisable(GL_LIGHTING);
         glDisable(GL_LIGHT0);
         glDisable(GL_DEPTH_TEST);
-    } else {
+    }
+    else
+    {
         quadrilatero(0, 0, 0.22, 1, 1, lineRgbColor);
         desenhaMarcadoresHora();
         desenhaPonteiros();
@@ -177,18 +215,23 @@ void desenhaVidro() {
     glPopMatrix();
 }
 
-void desenhaDobradica() {
+void desenhaDobradica()
+{
     GLfloat lineRgbColor[] = {0.60, 0.60, 0.60};
     quadrilatero(0, 0.290, 0.1, 1.8, 0.4, lineRgbColor);
     quadrilatero(0, -0.290, 0.1, 1.8, 0.4, lineRgbColor);
 }
 
-void desenhaBraceletes() {
-    if (temTextura) {
+void desenhaBraceletes()
+{
+    if (temTextura)
+    {
         GLfloat lineRgbColor[] = {1, 1, 1};
         quadrilateroComTextura(0, 0.553, 0.8, 0.20, 0.28, lineRgbColor);
         quadrilateroComTextura(0, -0.553, 0.8, 0.20, 0.28, lineRgbColor);
-    } else {
+    }
+    else
+    {
         GLfloat lineRgbColor[] = {0, 0, 0};
         quadrilateroComTextura(0, 0.553, 0.8, 0.20, 0.28, lineRgbColor);
         quadrilateroComTextura(0, -0.553, 0.8, 0.20, 0.28, lineRgbColor);
@@ -206,7 +249,8 @@ void desenhaBraceletes() {
     glEnd();
 }
 
-void desenhaFivela() {
+void desenhaFivela()
+{
     GLfloat lineRgbColor[] = {1, 0.8, 0.6};
     quadrilatero(0, 0.837, 0.1, 1.6, 0.6, lineRgbColor);
     GLfloat lineRgbColor1[] = {1, 1, 1};
@@ -214,14 +258,16 @@ void desenhaFivela() {
     quadrilatero(0, 0.827, 0.1, 0.1, 0.3, lineRgbColor);
 }
 
-void desenhaRegulagens() {
+void desenhaRegulagens()
+{
     glColor3f(1, 1, 1);
     circunferencia(0, -0.45, 0.01);
     circunferencia(0, -0.55, 0.01);
     circunferencia(0, -0.65, 0.01);
 }
 
-void desenhaRelogio() {
+void desenhaRelogio()
+{
     glPushMatrix();
     desenhaArmacao();
     glPopMatrix();
@@ -247,27 +293,37 @@ void desenhaRelogio() {
     glPopMatrix();
 }
 
-void opcoesMouse(int botao, int estado, int x, int y) {
-    if (botao == GLUT_LEFT_BUTTON) {
+void opcoesMouse(int botao, int estado, int x, int y)
+{
+    if (botao == GLUT_LEFT_BUTTON)
+    {
         pontoPrincipal.angulo += 1;
-    } else if (botao == GLUT_RIGHT_BUTTON) {
+    }
+    else if (botao == GLUT_RIGHT_BUTTON)
+    {
         pontoPrincipal.angulo -= 1;
     }
-    if (botao == GLUT_LEFT_BUTTON && estado == GLUT_DOWN) {
+    if (botao == GLUT_LEFT_BUTTON && estado == GLUT_DOWN)
+    {
         printf("%f , %f\n", -1 + (float)x / (float)(glutGet(GLUT_WINDOW_WIDTH) / 2), +1 - (float)y / (float)(glutGet(GLUT_WINDOW_HEIGHT) / 2));
     }
     glutPostRedisplay();
 }
 
-void aplicaTextura() {
-    if (!temTextura) {
+void aplicaTextura()
+{
+    if (!temTextura)
+    {
         glDisable(GL_TEXTURE_2D);
-    } else {
+    }
+    else
+    {
         glEnable(GL_TEXTURE_2D);
     }
 }
 
-void mostraMenu() {
+void mostraMenu()
+{
     cout << "\nDurante a execucao, voce pode usar as seguintes teclas:\n"
          << " [ESC] - Para fechar a janela\n"
          << " [v] - Voltar o relógio para posição original\n"
@@ -288,61 +344,66 @@ void mostraMenu() {
          << " [Botão direito mouse] - Rotacionar o relógio para direita\n\n";
 }
 
-void opcoesTeclado(unsigned char key, int x, int y) {
-    switch (key) {
-        case 'a':
-            pontoPrincipal.x -= 0.1f;
-            break;
-        case 's':
-            pontoPrincipal.y -= 0.1f;
-            break;
-        case 'd':
-            pontoPrincipal.x += 0.1f;
-            break;
-        case 'w':
-            pontoPrincipal.y += 0.1f;
-            break;
-        case 'i':
-            temIluminacao = !temIluminacao;
-            break;
-        case '+':
-            pontoPrincipal.escala += 0.1;
-            break;
-        case '-':
-            pontoPrincipal.escala -= 0.1;
-            break;
-        case 'v':
-            pontoPrincipal = PontoXY();
-            break;
-        case 't':
-            temTextura = !temTextura;
-            break;
-        case 'p':
-            animacaoAtiva = !animacaoAtiva;
-            break;
-        case 'k':
-            anguloHora -= 30;
-            break;
-        case 'l':
-            anguloMinuto -= 24;
-            break;
-        case 'z':
-            anguloHora += 30;
-            break;
-        case 'x':
-            anguloMinuto += 24;
-            break;
-        case 27:
-            exit(0);
-            break;
+void opcoesTeclado(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+    case 'a':
+        pontoPrincipal.x -= 0.1f;
+        break;
+    case 's':
+        pontoPrincipal.y -= 0.1f;
+        break;
+    case 'd':
+        pontoPrincipal.x += 0.1f;
+        break;
+    case 'w':
+        pontoPrincipal.y += 0.1f;
+        break;
+    case 'i':
+        temIluminacao = !temIluminacao;
+        break;
+    case '+':
+        pontoPrincipal.escala += 0.1;
+        break;
+    case '-':
+        pontoPrincipal.escala -= 0.1;
+        break;
+    case 'v':
+        pontoPrincipal = PontoXY();
+        break;
+    case 't':
+        temTextura = !temTextura;
+        break;
+    case 'p':
+        animacaoAtiva = !animacaoAtiva;
+        break;
+    case 'k':
+        anguloHora -= 30;
+        break;
+    case 'l':
+        anguloMinuto -= 24;
+        break;
+    case 'z':
+        anguloHora += 30;
+        break;
+    case 'x':
+        anguloMinuto += 24;
+        break;
+    case 27:
+        exit(0);
+        break;
     }
-    if (anguloHora == 0) anguloHora = 360;
-    if (anguloMinuto == 0) anguloMinuto = 360;
+    if (anguloHora == 0)
+        anguloHora = 360;
+    if (anguloMinuto == 0)
+        anguloMinuto = 360;
     glutPostRedisplay();
 }
 
-void init(void) {
-    glClearColor(1, 1, 1, 1);  // Cor de fundo da janela
+void init(void)
+{
+    glClearColor(1, 1, 1, 1); // Cor de fundo da janela
     criaImagemTextura();
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -358,7 +419,8 @@ void init(void) {
     aplicaTextura();
 }
 
-void display(void) {
+void display(void)
+{
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     aplicaTextura();
     glEnable(GL_DEPTH_TEST);
@@ -371,7 +433,8 @@ void display(void) {
     glFlush();
 }
 
-void reshape(int w, int h) {
+void reshape(int w, int h)
+{
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -385,7 +448,8 @@ void reshape(int w, int h) {
     glLoadIdentity();
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
     glutInit(&argc, argv);
     mostraMenu();
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
